@@ -1,50 +1,85 @@
 @import 'leaflet/dist/leaflet.css';
+@import "@maptiler/sdk/dist/maptiler-sdk.css";
+@import 'mapbox-gl/dist/mapbox-gl.css';
 
 #map {
     height: 100vh;
     width: 100vw;
 }
 
+.mapboxgl-popup-content {
+    color: black;
+    padding: 20px;
+}
+
+.mapboxgl-popup {
+    padding: 5px;
+}
+
+.mapboxgl-popup-close-button {
+    margin: 5px;
+}
+
 /* Style du HUD et de la barre d'items */
 #hud {
     z-index: 9999;
     position: fixed;
-    bottom: 20px;
+    top: 0px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
+    width: 100svw;
+    height: 150px;
+    background: linear-gradient(0deg, rgba(34,193,195,0) 0%, rgb(143, 143, 143) 100%);
 }
 
-.item-bar {
+.bars {
+    gap: 10px;
+    height: fit-content;
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Positionnement de la barre de vie */
+.health-bar {
     display: flex;
     gap: 10px;
+    height: fit-content;
     background-color: rgba(0, 0, 0, 0.5);
     padding: 10px;
     border-radius: 12px;
 }
 
-/* Positionnement de la barre de vie */
-.health-bar {
-    position: absolute;
-    top: -40px; /* Positionnez selon votre besoin */
-    left: 0;
-    display: flex;
-    gap: 5px;
-}
-
 /* Style pour chaque cœur */
-.heart {
+.heart-full {
     width: 20px;
     height: 20px;
     color: red;
+}
+
+.food-bar {
+    display: flex;
+    gap: 10px;
+    height: fit-content;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.food-full {
+    width: 20px;
+    height: 20px;
+    color: #fd6a39;
 }
 
 /* Barre d'items */
 .item-bar {
     position: relative;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     background-color: rgba(0, 0, 0, 0.5);
     padding: 10px;
     border-radius: 12px;
@@ -69,6 +104,8 @@
 
 .item-slot:hover {
     border-color: #ffcc00;
+    cursor: pointer;
+    background-color: #7e7e7e;
 }
 
 .clock-container {
@@ -108,11 +145,12 @@
 /* Inventory */
 .inventory-overlay {
     position: absolute;
-    top: 100px;
+    top: 150px;
     left: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 99999;
 }
 
 .inventory-window {

@@ -15,7 +15,9 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "@maptiler/sdk": "^2.4.0",
         "alpinejs": "^3.14.3",
-        "leaflet": "^1.9.4"
+        "leaflet": "^1.9.4",
+        "mapbox-gl": "^3.7.0"
     }
 }

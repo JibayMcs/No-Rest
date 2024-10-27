@@ -9,4 +9,5 @@
     <div class="item-slot"></div>
     <div class="item-slot"></div>
     <div class="item-slot"></div>
+    <div class="item-slot"></div>
 </div>

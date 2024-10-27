@@ -865,19 +865,14 @@
 >
     <div id="map"></div>
 
-    <div class="clock-container">
-        <div class="real-time">
-            Heure actuelle : <span x-text="realTime"></span>
-        </div>
-        <div class="game-time">
-            Heure du jeu : <span x-text="gameTime"></span>
-        </div>
-    </div>
-
-    <template x-if="player.showInventory">
+    <template x-if="player && player.showInventory">
         <div class="inventory-overlay">
             <div class="inventory-window">
-                <h2 class="mb-2">Inventaire</h2>
+                <div class="flex justify-between mb-4">
+                    <h2>Inventaire</h2>
+                    <x-phosphor-x-circle-duotone class="h-5 w-5 cursor-pointer text-red-600"
+                                                 x-on:click="player.toggleInventory()"/>
+                </div>
                 <div class="inventory-grid">
                     <template x-for="(details, item) in player.inventory" :key="item">
                         <div x-data="{ showTooltip: false }">
@@ -888,7 +883,8 @@
                                 @mouseleave="showTooltip = false"
                             >
                                 <!-- Icône de l'item -->
-                                <img :src="lootTable[item - 1].icon ?? '/assets/items/none.png'" :alt="lootTable[item - 1].name" class="item-icon"/>
+                                <img :src="lootTable[item - 1].icon ?? '/assets/items/none.png'"
+                                     :alt="lootTable[item - 1].name" class="item-icon"/>
 
                                 <!-- Quantité en bas à droite -->
                                 <span class="item-quantity" x-text="details.quantity"></span>
@@ -905,15 +901,28 @@
         </div>
     </template>
 
-
     <div id="hud">
 
-        <!-- Barre de vie -->
-        <livewire:health-bar/>
+        <!-- Horloge -->
+        <div class="clock-container">
+            <div class="real-time">
+                Heure actuelle : <span x-text="realTime"></span>
+            </div>
+            <div class="game-time">
+                Heure du jeu : <span x-text="gameTime"></span>
+            </div>
+            <div class="player-coords">
+                Coordonnées : <span x-text="player ? new Intl.NumberFormat('en', { minimumFractionDigits: 2, maximumFractionDigits: 5}).format(player.position.lat) : ''"></span>, <span x-text="player ? new Intl.NumberFormat('en', { minimumFractionDigits: 5, maximumFractionDigits: 5}).format(player.position.lng) : ''"></span>
+            </div>
+        </div>
 
+        <div class="bars">
+            <!-- Barre d'items -->
+            <livewire:items-bar/>
 
-        <livewire:items-bar/>
-
+            <!-- Barre de vie -->
+            <livewire:health-bar/>
+        </div>
     </div>
 </div>
 
