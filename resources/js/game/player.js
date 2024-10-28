@@ -82,6 +82,9 @@ export default class Player {
                 if (keysPressed.d) newLng += moveDistance;
             }
 
+            // Sauvegarde de la nouvelle position
+            this.savePosition({lat: newLat, lng: newLng});
+
             const possiblePosition = [newLng, newLat];
             const buildings = this.world.map.queryRenderedFeatures(this.world.map.project(possiblePosition), {
                 layers: ['3d-buildings']
