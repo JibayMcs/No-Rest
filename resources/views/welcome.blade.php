@@ -941,6 +941,7 @@
             <!-- Barre de vie -->
             <livewire:health-bar/>
         </div>
+
     </div>
 </div>
 

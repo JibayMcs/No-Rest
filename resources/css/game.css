@@ -22,6 +22,10 @@
     margin: 5px;
 }
 
+.mapboxgl-marker {
+    opacity: 1 !important;
+}
+
 /* Style du HUD et de la barre d'items */
 #hud {
     z-index: 9999;

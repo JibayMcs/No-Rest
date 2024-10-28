@@ -3,8 +3,9 @@ import Buildings from "./buildings.js";
 import Biome from "./biome.js";
 
 export default class World {
-    constructor(map) {
+    constructor(map, minimap) {
         this.map = map;
+        this.minimap = minimap;
         this.player = new Player(this);
         this.visitedCells = new Set();
         this.cellSize = 0.001;

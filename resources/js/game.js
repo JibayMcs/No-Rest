@@ -3,9 +3,11 @@ import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
 import {lootTable} from "./game/loot_table.js";
 
 import World from "./game/world.js";
+import {Minimap} from "./game/minimap.js";
 
 Alpine.data('game', () => ({
     map: null,
+    minimap: null,
     currentTime: 0,  // Temps écoulé en secondes pour le cycle jour/nuit
     dayDuration: 1200,  // 20 minutes en secondes pour le jour
     nightDuration: 1200, // 20 minutes en secondes pour la nuit
@@ -29,9 +31,9 @@ Alpine.data('game', () => ({
         });
 
         //disable right click
-        document.addEventListener('contextmenu', function(e) {
+        /*document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-        });
+        });*/
 
         this.updateRealTime();
         this.startGameClock();
@@ -40,7 +42,7 @@ Alpine.data('game', () => ({
             console.log('Map initialized');
             await this.dayNightCycle();
 
-            this.world = new World(this.map);
+            this.world = new World(this.map, this.minimap);
             await this.world.init();
 
             this.player = this.world.player;
@@ -174,8 +176,19 @@ Alpine.data('game', () => ({
             container: 'map',
             interactive: false,
             antialias: true,
-            style: import.meta.env.VITE_MAPBOX_STYLE
+            attributionControl: false,
+            fadeDuration: 0,
+            projection: 'mercator',
+            style: import.meta.env.VITE_MAPBOX_STYLE + '?optimize=true',
         });
+
+        this.minimap = new Minimap({
+            zoom: 13,
+            zoomLevels: [],
+            accessToken: import.meta.env.VITE_MAPBOX_TOKEN,
+        });
+
+        this.map.addControl(this.minimap, 'bottom-right');
     },
 
     dayNightCycle: async function() {
@@ -201,6 +214,7 @@ Alpine.data('game', () => ({
             'source': 'mapbox-dem',
             'exaggeration': 1.5
         });
+
 
         this.map.addLayer({
             'id': '3d-buildings',
@@ -232,6 +246,7 @@ Alpine.data('game', () => ({
                 'fill-extrusion-opacity': 0.6
             }
         });
+
 
         const updateCycle = () => {
             const [gameHours] = this.gameTime.split(':').map(Number);

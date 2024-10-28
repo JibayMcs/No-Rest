@@ -23,6 +23,7 @@ export default class Player {
         this.loadPosition();
         this.loadInventory();
         this.world.map.setCenter(this.position);
+        this.world.minimap._miniMap.setCenter(this.position);
 
         this.initPlayerMovement(this.world.map);
         this.initPlayerClickInteraction(this.world.map, this.world.buildings);
