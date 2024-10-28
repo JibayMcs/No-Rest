@@ -20,6 +20,19 @@ Alpine.data('game', () => ({
     playerMarker: null,
 
     init: function() {
+
+        //disable Ctrl + S and Ctrl + U
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 's' || e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+        //disable right click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
         this.updateRealTime();
         this.startGameClock();
 

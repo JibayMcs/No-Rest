@@ -34,7 +34,12 @@ export default class Player {
         const sprintMoveDistance = 0.000001; // Vitesse en sprint
         const cameraAltitude = 700;
 
-        const marker = new mapboxgl.Marker({color: this.skinColor})
+        const playerMarker = document.createElement('div');
+        playerMarker.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 613 613" enable-background="new 0 0 613 613" xml:space="preserve" style="fill: ${this.skinColor}; width: 40px; height: 40px;" stroke-width="10px" stroke-dasharray="2,2" stroke="black"><path d="M314.419,12.317c37.098,4.821,66.06,45.185,66.06,93.906c0,26.98-9.241,51.072-23.476,68.24 c77.149,14.515,82.984,144.563,82.984,235.849h-53.504l-14.194,190.539H236.347L223.79,410.312h-50.773 c0-91.544-1.839-223.87,82.439-236.942c-13.622-17.089-22.384-40.835-22.384-67.147c0-51.966,33.077-93.906,73.702-93.906 C309.31,12.317,311.944,11.938,314.419,12.317L314.419,12.317z"/></svg>
+        `;
+
+        const marker = new mapboxgl.Marker(playerMarker)
             .setLngLat([lng, lat])
             .addTo(this.world.map);
 
