@@ -159,10 +159,6 @@ Alpine.data('game', () => ({
         this.map = new mapboxgl.Map({
             accessToken: import.meta.env.VITE_MAPBOX_TOKEN,
             container: 'map',
-            zoom: 19,
-            pitch: 90,
-            bearing: -90,
-            scrollZoom: false,
             interactive: false,
             antialias: true,
             style: import.meta.env.VITE_MAPBOX_STYLE

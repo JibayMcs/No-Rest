@@ -912,7 +912,10 @@
                 Heure du jeu : <span x-text="gameTime"></span>
             </div>
             <div class="player-coords">
-                Coordonnées : <span x-text="player ? new Intl.NumberFormat('en', { minimumFractionDigits: 2, maximumFractionDigits: 5}).format(player.position.lat) : ''"></span>, <span x-text="player ? new Intl.NumberFormat('en', { minimumFractionDigits: 5, maximumFractionDigits: 5}).format(player.position.lng) : ''"></span>
+                Coordonnées : <span
+                    x-text="player ? new Intl.NumberFormat('en', { minimumFractionDigits: 2, maximumFractionDigits: 5}).format(player.position.lat) : ''"></span>,
+                <span
+                    x-text="player ? new Intl.NumberFormat('en', { minimumFractionDigits: 5, maximumFractionDigits: 5}).format(player.position.lng) : ''"></span>
             </div>
         </div>
 
@@ -920,6 +923,21 @@
             <!-- Barre d'items -->
             <livewire:items-bar/>
 
+            <template x-if="player != null">
+                <div
+                    x-data="{
+                        calcPercentage(min, max, val) {
+                            return ((val-min)/(max-min))*100
+                        }
+                    }"
+                    class="flex h-2.5 w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800"
+                    role="progressbar" aria-label="default progress bar" :aria-valuenow="player.stamina"
+                    :aria-valuemin="0" :aria-valuemax="player.maxStamina">
+                    <div class="h-full rounded-xl bg-lime-700 dark:bg-lime-600"
+                         :style="`width: ${calcPercentage(0, player.maxStamina, player.stamina)}%`">
+                    </div>
+                </div>
+            </template>
             <!-- Barre de vie -->
             <livewire:health-bar/>
         </div>

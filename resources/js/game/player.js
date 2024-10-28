@@ -7,6 +7,11 @@ export default class Player {
     showInventory = false;
     maxHealth = 100;
     health = 100;
+    maxStamina = 100;
+    stamina = 100;
+    isSprinting = false;
+    isMoving = false;
+
     hitboxRadius = 0.00005; // Rayon de collision
     interactionRadius = 0.0005; // Rayon pour l'interaction
 
@@ -25,53 +30,41 @@ export default class Player {
 
     initPlayerMovement() {
         let {lat, lng} = this.position;
-        const moveDistance = 0.000005;
-        const cameraAltitude = 1200;
+        const baseMoveDistance = 0.0000005;
+        const sprintMoveDistance = 0.000001; // Vitesse en sprint
+        const cameraAltitude = 700;
+
         const marker = new mapboxgl.Marker({color: this.skinColor})
             .setLngLat([lng, lat])
-            .addTo(this.world.map)
-            /*.setPopup(
-                new mapboxgl.Popup()
-                    .setHTML()
-            )*/;
+            .addTo(this.world.map);
 
-        // Ajout des cercles de debug pour la hitbox et la zone d'interaction
-        /*map.addSource('hitbox-circle', {
-            type: 'geojson',
-            data: this.createCircleData([lng, lat], this.hitboxRadius)
-        });
-
-        map.addSource('interaction-circle', {
-            type: 'geojson',
-            data: this.createCircleData([lng, lat], this.interactionRadius)
-        });*/
-
-        //TODO Only for debug
-        /*map.addLayer({
-            id: 'hitbox-layer',
-            type: 'circle',
-            source: 'hitbox-circle',
-            paint: {
-                'circle-radius': {
-                    stops: [[0, 0], [22, this.hitboxRadius * 1e6]]
-                },
-                'circle-color': '#ff0000',
-                'circle-opacity': 0.03
-            }
-        });*/
-
-        // Stockage de l'état des touches et des mouvements de souris
         const keysPressed = {z: false, s: false, q: false, d: false};
 
+        // Gestion des touches directionnelles
         window.addEventListener('keydown', (event) => {
             if (['z', 's', 'q', 'd'].includes(event.key)) {
                 keysPressed[event.key] = true;
+                this.isMoving = true;
+            }
+
+            // Activer le sprint si Shift est pressée avec une touche de déplacement
+            if (event.key === 'Shift' && this.isMoving) {
+                this.isSprinting = true;
             }
         });
 
         window.addEventListener('keyup', (event) => {
             if (['z', 's', 'q', 'd'].includes(event.key)) {
                 keysPressed[event.key] = false;
+                // Vérifiez si toutes les touches de direction sont relâchées
+                if (!keysPressed.z && !keysPressed.s && !keysPressed.q && !keysPressed.d) {
+                    this.isMoving = false;
+                }
+            }
+
+            // Désactiver le sprint si Shift est relâchée ou si aucune touche de déplacement n'est pressée
+            if (event.key === 'Shift' || !this.isMoving) {
+                this.isSprinting = false;
             }
         });
 
@@ -79,10 +72,15 @@ export default class Player {
             let newLat = lat;
             let newLng = lng;
 
-            if (keysPressed.z) newLat += moveDistance;
-            if (keysPressed.s) newLat -= moveDistance;
-            if (keysPressed.q) newLng -= moveDistance;
-            if (keysPressed.d) newLng += moveDistance;
+            // Choisir la distance en fonction du sprint et de la stamina
+            const moveDistance = (this.isSprinting && this.stamina > 0) ? sprintMoveDistance : baseMoveDistance;
+
+            if (this.isMoving) {
+                if (keysPressed.z) newLat += moveDistance;
+                if (keysPressed.s) newLat -= moveDistance;
+                if (keysPressed.q) newLng -= moveDistance;
+                if (keysPressed.d) newLng += moveDistance;
+            }
 
             const possiblePosition = [newLng, newLat];
             const buildings = this.world.map.queryRenderedFeatures(this.world.map.project(possiblePosition), {
@@ -95,22 +93,25 @@ export default class Player {
                 this.position = {lat, lng};
                 marker.setLngLat([lng, lat]);
 
+                // Mise à jour de la caméra
                 const camera = this.world.map.getFreeCameraOptions();
-
                 camera.position = mapboxgl.MercatorCoordinate.fromLngLat({lng, lat}, cameraAltitude);
-
                 const lookAtLng = lng;
-                const lookAtLat = lat + 0.001;
-
+                const lookAtLat = lat + 0.00009;
                 camera.lookAtPoint({lng: lookAtLng, lat: lookAtLat});
                 this.world.map.setFreeCameraOptions(camera);
-
-                // Mettre à jour les cercles pour suivre la position du joueur
-                //TODO Only for debug
-                /*map.getSource('hitbox-circle').setData(this.createCircleData([lng, lat], this.hitboxRadius));
-                map.getSource('interaction-circle').setData(this.createCircleData([lng, lat], this.interactionRadius));*/
             }
 
+            // Gestion de la stamina
+            if (this.isSprinting && this.stamina > 0 && this.isMoving) {
+                this.stamina -= 0.1; // Décrément de la stamina en sprint
+                if (this.stamina < 0) this.stamina = 0;
+            } else if (!this.isSprinting && this.stamina < this.maxStamina) {
+                this.stamina += 0.05; // Récupération de la stamina lorsque le joueur ne sprinte pas
+                if (this.stamina > this.maxStamina) this.stamina = this.maxStamina;
+            }
+
+            // Si le joueur est en mouvement, continuez la boucle d'animation
             requestAnimationFrame(movePlayer);
         };
 
